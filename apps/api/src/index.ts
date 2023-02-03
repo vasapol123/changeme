@@ -1,33 +1,38 @@
 import cors from 'cors';
 import http from 'http';
+import path from 'path';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { loadSchema } from '@graphql-tools/load';
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader';
+import { addResolversToSchema } from '@graphql-tools/schema';
+
 import config from './config/index';
 
 async function bootstrap() {
   const app = express();
   const httpServer = http.createServer(app);
 
-  // The GraphQL schema
-  const typeDefs = `#graphql
-    type Query {
-      hello: String
-    }
-  `;
-
-  // A map of functions which return data for the schema.
   const resolvers = {
     Query: {
-      hello: () => 'world',
+      users: () => [{ name: 'me' }],
     },
   };
 
+  const schema = await loadSchema(
+    path.join(__dirname, './app/graphql/schema.graphql'),
+    {
+      loaders: [new GraphQLFileLoader()],
+    },
+  );
+
+  const schemaWithResolvers = addResolversToSchema({ schema, resolvers });
+
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
+    schema: schemaWithResolvers,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   await server.start();

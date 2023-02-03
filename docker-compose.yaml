@@ -3,17 +3,18 @@ version: '3.8'
 services:
   api:
     build:
+      image: api:latest
       dockerfile: Dockerfile
       context: .
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules/
+      - /usr/src/app/apps/api/node_modules/
+    networks:
+      - node_network
     ##    if you want to expose app as well.
     # ports:
     #   - 8080:8080
-    volumes:
-      - ./:/usr/src/app
-      - /usr/src/app/node_modules
-      - /usr/src/app/apps/api/node_modules
-    networks:
-      - node_network
 
   proxy:
     restart: unless-stopped
