@@ -8,9 +8,9 @@ COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY pnpm-workspace.yaml ./
 
-COPY ./apps/api/package.json ./apps/api/
+COPY ./apps/api/package.json apps/api/
 
-RUN pnpm install
+RUN pnpm install --force
 
 COPY ./ ./
 

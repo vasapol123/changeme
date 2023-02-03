@@ -1,15 +1,43 @@
-import express, { Request, Response } from 'express';
-import * as dotenv from 'dotenv';
+import cors from 'cors';
+import http from 'http';
+import express from 'express';
+import bodyParser from 'body-parser';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import config from './config/index';
 
-dotenv.config();
+async function bootstrap() {
+  const app = express();
+  const httpServer = http.createServer(app);
 
-const app = express();
-const port = process.env.APP_PORT;
+  // The GraphQL schema
+  const typeDefs = `#graphql
+    type Query {
+      hello: String
+    }
+  `;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello World!');
-});
+  // A map of functions which return data for the schema.
+  const resolvers = {
+    Query: {
+      hello: () => 'world',
+    },
+  };
 
-app.listen(port, () => {
-  console.log(`🚀 Application is running`);
-});
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
+  await server.start();
+
+  app.use(cors(), bodyParser.json(), expressMiddleware(server));
+
+  await new Promise((resolve: any) =>
+    httpServer.listen({ port: config.APP_PORT }, resolve),
+  );
+  console.log(`🚀 Server ready at http://localhost:${config.APP_PORT}`);
+}
+
+bootstrap();

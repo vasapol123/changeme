@@ -30,8 +30,8 @@ const config: WebpackConfiguration = {
   ],
   externals: [nodeExternals()],
   resolve: {
-    modules: ['src', 'node_modules'],
-    extensions: ['.ts', '.js', '.json'],
+    modules: ['./src', './node_modules'],
+    extensions: ['.ts', '.js', '.cjs', '.mjs', '.json'],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
