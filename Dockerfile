@@ -14,6 +14,8 @@ RUN pnpm install --force
 
 COPY ./ ./
 
+RUN cd ./apps/api/ && npx prisma generate
+
 EXPOSE 8080
 
 CMD ["npx", "nx", "start:dev", "api"]
