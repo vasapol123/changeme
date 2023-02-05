@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output = "../__generated__/prisma-nestjs-graphql"
+  fields_Validator_from = "class-validator"
+  fields_Validator_input = true
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int            @id @default(autoincrement())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  /// @Validator.IsEmail()
+  /// @Validator.@IsNotEmpty()
+  email              String         @unique
+
+  /// @Validator.IsString()
+  /// @Validator.@IsNotEmpty()
+  displayName        String
+
+  /// @Validator.IsString()
+  /// @Validator.@IsNotEmpty()
+  hashedPassword     String
+
+  /// @Validator.IsString()
+  hashedRefreshToken String?
+  lastLogin          DateTime?
+  ExternalAuths      ExternalAuth[]
+}
+        
+model ExternalAuth {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  provider   String
+  providerId String   @unique
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+}

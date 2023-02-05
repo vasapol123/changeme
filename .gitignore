@@ -1,9 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,dotenv,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,dotenv,node
 
-### Git ###
-.husky
-
 ### dotenv ###
 .env
 
