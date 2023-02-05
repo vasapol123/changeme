@@ -3,6 +3,7 @@ import path from 'path';
 import * as argon2 from 'argon2';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AuthTokens } from '@shared/types';
 import PrismaService from '../prisma/prisma.service';
 
 @Injectable()
@@ -16,7 +17,7 @@ export default class TokensService {
     userId: number,
     email: string,
     displayName: string,
-  ) {
+  ): Promise<AuthTokens> {
     const jwtPayload = {
       sub: userId,
       displayName,

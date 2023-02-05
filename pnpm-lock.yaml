@@ -23,6 +23,7 @@ importers:
       '@nestjs/schematics': ^9.0.0
       '@nestjs/testing': ^9.0.0
       '@prisma/client': ^4.9.0
+      '@shared/types': workspace:^1.0.0
       '@types/express': ^4.17.13
       '@types/jest': 28.1.8
       '@types/node': ^16.0.0
@@ -84,6 +85,7 @@ importers:
       '@nestjs/cli': 9.2.0_webpack-cli@5.0.1
       '@nestjs/schematics': 9.0.4_typescript@4.9.5
       '@nestjs/testing': 9.3.2_7a34jc7ugkzz7otoyin34qriiu
+      '@shared/types': link:../../packages/@shared/types
       '@types/express': 4.17.16
       '@types/jest': 28.1.8
       '@types/node': 16.18.11
@@ -112,6 +114,18 @@ importers:
       webpack: 5.75.0_webpack-cli@5.0.1
       webpack-cli: 5.0.1_webpack@5.75.0
       webpack-node-externals: 3.0.0
+
+  packages/shared-types:
+    specifiers:
+      typescript: ^4.7.4
+    devDependencies:
+      typescript: 4.9.5
+
+  packages/shared/types:
+    specifiers:
+      typescript: ^4.9.5
+    devDependencies:
+      typescript: 4.9.5
 
 packages:
 

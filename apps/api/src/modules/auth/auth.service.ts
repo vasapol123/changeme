@@ -1,9 +1,9 @@
 import * as argon2 from 'argon2';
 import { Injectable } from '@nestjs/common';
+import { AuthTokens } from '@shared/types';
 import TokensService from '../tokens/tokens.service';
 import UserService from '../users/users.service';
 import SignupInput from './input/signup.input';
-
 @Injectable()
 export default class AuthService {
   constructor(
@@ -11,7 +11,7 @@ export default class AuthService {
     private readonly tokensService: TokensService,
   ) {}
 
-  public async signupLocal(signupInput: SignupInput) {
+  public async signupLocal(signupInput: SignupInput): Promise<AuthTokens> {
     const hashedPassword = await argon2.hash(signupInput.password);
 
     const user = await this.usersService.createUser({
