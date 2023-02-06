@@ -8,6 +8,8 @@ import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import PrismaModule from './modules/prisma/prisma.module';
+import { GqlAccessTokenGuard } from './common/guards/access-token.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -20,6 +22,7 @@ import PrismaModule from './modules/prisma/prisma.module';
       buildSchemaOptions: {
         dateScalarMode: 'isoDate',
       },
+      context: ({ req }) => ({ req }),
     }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -28,6 +31,13 @@ import PrismaModule from './modules/prisma/prisma.module';
     AuthModule,
     PrismaModule,
   ],
-  providers: [AppResolver, AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: GqlAccessTokenGuard,
+    },
+    AppResolver,
+    AppService,
+  ],
 })
 export class AppModule {}
