@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import PrismaService from '../prisma/prisma.service';
 
@@ -26,6 +26,20 @@ export default class UsersService {
         }
       }
       throw e;
+    }
+  }
+
+  public async findOneUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    try {
+      const user = await this.prisma.user.findUnique({ where });
+
+      return user;
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2001') {
+          throw new ForbiddenException('Email does not exist');
+        }
+      }
     }
   }
 }

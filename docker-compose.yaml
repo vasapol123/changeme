@@ -7,17 +7,19 @@ services:
       dockerfile: Dockerfile
       context: .
       target: develop
+    labels:
+      - "traefik.http.routers.api.rule=(Host(`web.localhost`) && PathPrefix(`/api`))"
     depends_on:
       - dev-db
+      - traefik
     volumes:
       - ./:/app/
       - /app/node_modules/
       - /app/apps/api/node_modules/
+    ports:
+      - 6000:6000
     networks:
       - node-network
-    ##    if you want to expose app as well.
-    # ports:
-    #   - 8080:8080
 
   web:
     container_name: web
@@ -25,13 +27,19 @@ services:
       dockerfile: Dockerfile.web
       context: .
       target: develop
+    labels:
+      - "traefik.http.routers.web.rule=Host(`web.localhost`)"
     depends_on:
+      - api
       - dev-db
+      - traefik
     volumes:
       - ./:/app/
       - /app/node_modules/
       - /app/apps/web/node_modules/
       - /app/apps/web/.next
+    ports:
+      - 3000:3000
     networks:
       - node-network
 
@@ -50,15 +58,26 @@ services:
     networks:
       - node-network
 
-  proxy:
-    restart: unless-stopped
-    image: nginx
+  # proxy:
+  #   restart: unless-stopped
+  #   image: nginx
+  #   ports:
+  #     - 80:80
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #   networks:
+  #     - node-network
+
+  traefik:
+    image: traefik:v2.9
+    command: --api.insecure=true --providers.docker
     ports:
       - 80:80
-    depends_on:
-      - api
+      - 8080:8080
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - node-network
 

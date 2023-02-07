@@ -55,7 +55,7 @@ COPY --from=builder /app/apps/api/dist/ ./apps/api/dist/
 COPY --from=builder /app/node_modules/ ./node_modules/
 COPY --from=builder /app/package.json ./package.json
 
-EXPOSE 8080
+EXPOSE 6000
 
 CMD ["node", "dist/bundle.js"]
 
@@ -63,7 +63,7 @@ CMD ["node", "dist/bundle.js"]
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS develop
 ENV NODE_ENV=development
-ENV NODE_OPTIONS=--max-old-space-size=4096
+ENV NODE_OPTIONS=--max-old-space-size=8192
 
 RUN npm install -g pnpm
 
@@ -71,7 +71,7 @@ WORKDIR /app
 
 COPY --from=deps /workspace-install ./
 
-EXPOSE 8080
+EXPOSE 6000
 
 WORKDIR /app/apps/api
 
