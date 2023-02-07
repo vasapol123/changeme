@@ -1,6 +1,40 @@
 version: '3.8'
 
 services:
+  api:
+    container_name: api
+    build:
+      dockerfile: Dockerfile
+      context: .
+      target: develop
+    depends_on:
+      - dev-db
+    volumes:
+      - ./:/app/
+      - /app/node_modules/
+      - /app/apps/api/node_modules/
+    networks:
+      - node-network
+    ##    if you want to expose app as well.
+    # ports:
+    #   - 8080:8080
+
+  web:
+    container_name: web
+    build:
+      dockerfile: Dockerfile.web
+      context: .
+      target: develop
+    depends_on:
+      - dev-db
+    volumes:
+      - ./:/app/
+      - /app/node_modules/
+      - /app/apps/web/node_modules/
+      - /app/apps/web/.next
+    networks:
+      - node-network
+
   dev-db:
     container_name: dev-pg-container
     image: postgres:latest
@@ -15,23 +49,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     networks:
       - node-network
-
-  api:
-    image: api:latest
-    build:
-      dockerfile: Dockerfile
-      context: .
-    depends_on:
-      - dev-db
-    volumes:
-      - ./:/usr/src/app
-      - /usr/src/app/node_modules/
-      - /usr/src/app/apps/api/node_modules/
-    networks:
-      - node-network
-    ##    if you want to expose app as well.
-    # ports:
-    #   - 8080:8080
 
   proxy:
     restart: unless-stopped

@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "webpack build --config webpack.config.ts",
     "format": "prettier --write \"src/**/*.ts\" \"__tests__/**/*.ts\"",
     "start": "nest start",
     "start:dev": "webpack --config webpack.config.ts --watch",
